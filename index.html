@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<!-- 
+    Exchange the line above for this to enable offline support
+    <html manifest="manifest.appcache">
+
+    Please make your homework before doing this:
+        http://www.alistapart.com/articles/application-cache-is-a-douchebag/
+        http://appcachefacts.info
+    
+    This might be necessary to set up on your server, to make sure 
+    files are updated when the appcache file itself is:
+        https://github.com/robnyman/Firefox-OS-Boilerplate-App/blob/gh-pages/.htaccess
+ -->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" type="text/css" href="css/base.css">
+    <link rel="stylesheet" type="text/css" href="css/headers.css">
+    <link rel="stylesheet" type="text/css" href="css/buttons.css">
+    <link rel="stylesheet" type="text/css" href="css/toolbars.css">
+    <title>Virada Mobile</title>
+    <script src="vendor/jquery-1.5.1.min.js"></script>
+    <script src="vendor/tempo.js"></script>
+    <script>
+    $(document).ready(function() {
+        function showProgramacao(local) {
+            $.getJSON("http://viradacultural.org/wp-admin/admin-ajax.php?action=get_events_location&location_id="+local+"&_wpnonce=fe91212660&callback=?", function (data) {
+                    $("#locais").hide('slow');
+                    $("#programacao").hide('slow');
+                    $("#programacao").html(data.html).show("slow");
+                    $(".bt-voltar").click(function () {
+                        $("#programacao").hide('slow');
+                        $("#locais").show("slow");
+                    });
+            });
+
+        }
+        locais = Tempo.prepare("locais");
+        $.getJSON("http://viradacultural.org/programacao?width=470&height=760&em_ajax=true&query=GlobalMapData&callback=?", function (data) {
+                locais.render(data);
+                $("span").click(function () {
+                    showProgramacao(this.id);
+                });
+        });
+    });
+    </script>
+
+    <style>
+        .share-social {
+            display:none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <section role="region">
+        <header>
+            <!-- Icon that will indicate whether you are online or offline - enabled if you are using offline/appcache (see above) -->
+            <div id="online-status" title="Online"></div>
+            <menu type="toolbar">
+                <button id="install"><span class="icon icon-add">add</span></button>
+            </menu>
+            <h1>
+                Virada Mobile
+            </h1>
+        </header>
+    </section>
+
+
+    <div id="main">
+
+        <p id="installation-instructions">Press the + button in the top right corner to install this app.</p>
+
+        <h2>Programação</h2>
+        <div id="container">
+            <ul id="locais" >
+                <li class="local" data-template><span id="{{location_id}}">{{location_name}}</span></li>
+            </ul>
+            <div id="programacao">
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div role="toolbar">
+            <ul>
+                <li><button id="reload" class="update">Update</button></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script type="text/javascript" src="js/base.js"></script>
+    <script type="text/javascript" src="js/webapp.js"></script>
+    <script type="text/javascript" src="js/offline.js"></script>
+
+    <!-- 
+        Loosely based on fxosstub: https://github.com/Jaxo/fxosstub
+    -->
+
+</body>
+</html>
